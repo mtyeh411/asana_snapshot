@@ -1,7 +1,7 @@
 require 'yaml'
 require 'logger'
-require_relative './asana_snapshot/task_searcher'
-require_relative './asana_snapshot/project_snapshooter'
+require 'asana_snapshot/task_searcher'
+require 'asana_snapshot/snapshot_generator'
 
 module AsanaSnapshot
   @@projects = []
@@ -38,7 +38,7 @@ module AsanaSnapshot
         )
 
         if tasks.any?
-          AsanaSnapshot::ProjectSnapshooter.new(
+          AsanaSnapshot::SnapshotGenerator.new(
             tasks,
             config_name: config['name'],
             project_id: project['id']

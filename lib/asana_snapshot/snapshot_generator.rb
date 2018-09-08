@@ -1,7 +1,7 @@
 require 'fileutils'
 
 module AsanaSnapshot
-  class ProjectSnapshooter
+  class SnapshotGenerator
     attr_reader :snapshot_directory, :file_name, :project_id, :project
 
     def initialize(tasks, config_name:, project_id:)

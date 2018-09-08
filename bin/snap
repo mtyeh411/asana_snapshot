@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'asana_snapshot'
+
+AsanaSnapshot.execute ARGV[0]

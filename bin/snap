@@ -2,4 +2,8 @@
 
 require 'asana_snapshot'
 
+AsanaSnapshot.configure do |config|
+  config.token  = ENV['ASANA_SNAPSHOT_TOKEN'] if ENV['ASANA_SNAPSHOT_TOKEN']
+end
+
 AsanaSnapshot.execute ARGV[0]

@@ -1,35 +1,39 @@
 require 'yaml'
 require 'logger'
+
 require 'asana_snapshot/task_searcher'
 require 'asana_snapshot/snapshot_generator'
+require 'asana_snapshot/configuration'
+require 'asana_snapshot/persistence'
 
 module AsanaSnapshot
-  @@projects = []
-  @@logger = Logger.new STDOUT
-
-  def self.projects=(projects)
-    @@projects = projects
+  class << self
+    attr_accessor :projects
+    attr_writer :configuration, :persistence_store
   end
 
-  def self.projects
-    @@projects
+  def self.configuration
+    @configuration ||= AsanaSnapshot::Configuration.new
   end
 
-  def self.logger
-    @@logger
+  def self.persistence_store
+    @persistence_store ||= AsanaSnapshot::Persistence.new(adapter: AsanaSnapshot.configuration.persistence[:adapter])
+  end
+
+  def self.configure
+    yield configuration
   end
 
   def self.execute(config_file)
-    unless ENV['ASANA_SNAPSHOT_TOKEN']
-      @@logger.error "No Asana token configured."
+    unless self.configuration.token
+      self.configuration.logger.error "No Asana token configured."
     else
       config = YAML.load_file config_file
 
-      AsanaSnapshot.projects = config['projects']
-
-      AsanaSnapshot.projects.each do |project|
+      self.projects = config['projects']
+      self.projects.each do |project|
         tasks = AsanaSnapshot::TaskSearcher.new(
-          token: ENV['ASANA_SNAPSHOT_TOKEN'],
+          token: self.configuration.token,
           workspace_id: config['workspace']
         ).search(
           'tags.any' => config['filters']['tags'],
@@ -40,14 +44,16 @@ module AsanaSnapshot
         if tasks.any?
           AsanaSnapshot::SnapshotGenerator.new(
             tasks,
-            config_name: config['name'],
+            group: config['title'],
             project_id: project['id']
           ).write
-          @@logger.info "Successfully created snapshot for #{project['name']}"
+          self.configuration.logger.info "Successfully created snapshot for #{project['name']}"
         else
-          @@logger.info "No tasks found."
+          self.configuration.logger.info "No tasks found for #{project['name']}"
         end
       end
+
+      self.persistence_store.save config['title']
     end
   end
 end

@@ -107,7 +107,6 @@ The `snap` executable uses the following environment variables to override the d
 
 | ENV                     | Config  |
 | ----------------------- |:-------:|
-| ASANA_SNAPSHOT_LOGGER   | logger  |
 | ASANA_SNAPSHOT_TOKEN    | token   |
 
 Example:

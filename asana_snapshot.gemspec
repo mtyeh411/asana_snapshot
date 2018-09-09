@@ -17,4 +17,5 @@
 
   s.required_ruby_version = '>=2.4.2'
   s.add_runtime_dependency 'asana', '~> 0.8', '>= 0.8.0'
+  s.add_runtime_dependency 'git', '~> 1.5.0', '>= 1.5.0'
 end

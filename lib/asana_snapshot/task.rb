@@ -27,7 +27,7 @@ module AsanaSnapshot
     end
 
     def to_s
-      "#{id} #{project_columns.map(&:column_name)} - #{assignee_name || 'Unassigned'} - #{name}"
+      "#{id} - #{name} - #{assignee_name || 'Unassigned'} #{project_columns.map(&:column_name)}"
     end
 
     def completed_task?
